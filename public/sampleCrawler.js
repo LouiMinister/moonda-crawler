@@ -35,8 +35,8 @@ const crawl = async () => {
         name: $tdList.eq(2).text(),
         institute: $tdList.eq(3).text(),
         hompageURL: $tdList.eq(4).find("a").attr("href"),
-        //date_sign: date.exec($tdList.eq(5).text()),
-        //date: $tdList.eq(5).text()
+        date_sign: $tdList.eq(5).text().match(/신청(.*)\n/g)[0].replace(/[신청|\n]/g, ""),
+        date_edu: $tdList.eq(5).text().match(/교육(.*)\n/g)[0].replace(/[교육|\n]/g, "")
       };
     });
 
