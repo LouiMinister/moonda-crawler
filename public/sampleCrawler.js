@@ -3,7 +3,7 @@ const cheerio = require("cheerio");
 
 const getHtml = async () => {
   try {
-    return await axios.get("http://www.yongin.go.kr/edu/institutionNLecture/lctrs/BD_selectCteduLctrsList.do");
+    return await axios.get("http://www.yongin.go.kr/edu/institutionNLecture/lctrs/BD_selectCteduLctrsList.do?q_lftmEdcRealm=&q_lftmEdcTrget=&q_searchYear=&q_searchMonth=&q_searchKey=&q_searchVal=&q_currPage=3&q_sortName=&q_sortOrder=&");
   } catch (error) {
     console.error(error);
   }
