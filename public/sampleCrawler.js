@@ -1,35 +1,32 @@
 const axios = require("axios");
 const cheerio = require("cheerio");
 
-const getHtml = async () => {
+
+const getLectureListURL = (page) => {
+    const url = `http://www.yongin.go.kr/edu/institutionNLecture/lctrs/BD_selectCteduLctrsList.do?q_lftmEdcRealm=&q_lftmEdcTrget=&q_searchYear=&q_searchMonth=&q_searchKey=&q_searchVal=&q_currPage=${page}&q_sortName=&q_sortOrder=&`;
+    return url;
+}
+
+const getHtml = async (url) => {
   try {
-    return await axios.get("http://www.yongin.go.kr/edu/institutionNLecture/lctrs/BD_selectCteduLctrsList.do?q_lftmEdcRealm=&q_lftmEdcTrget=&q_searchYear=&q_searchMonth=&q_searchKey=&q_searchVal=&q_currPage=3&q_sortName=&q_sortOrder=&");
+    return await axios.get(url);
   } catch (error) {
     console.error(error);
   }
-};
+}
 
-const crawl = async () => {
-    const trList = [];
+const crawl = async (page) => {
+    const trAry = [];
 
-    const html = await getHtml();
+    const lectureListURL = getLectureListURL(page);
+    const html = await getHtml(lectureListURL);
     const $ = cheerio.load(html.data);
     const $bodyList = $("div.t_list table tbody").children();
 
-    
-    //.children("li.section02");
-
-    console.log($bodyList.eq(0).html());
-    //console.log($bodyList.text());
-
-
     $bodyList.each(function(i, elem) {
       const $tdList = $(this).children();
-      const date = new RegExp("신청[0-9]*", "g");
 
-      //onsole.log(date.exec($tdList.eq(5).text()));
-
-      trList[i] = {
+      trAry[i] = {
         num: $tdList.eq(0).text(),
         sortation: $tdList.eq(1).text(),
         name: $tdList.eq(2).text(),
@@ -40,33 +37,30 @@ const crawl = async () => {
       };
     });
 
-
-    console.log(trList);
-    return html;
+    return trAry;
 }
 
-console.log(crawl());
-    
+const multiCrawl = async (startPage, endPage) => {
+    let crawlRes = ["PADDING"];
+    let pageAry;
+
+    for (let i = startPage; i <= endPage; i++){
+        crawlRes[i] = crawl(i);
+    }
+
+    try {
+        pageAry = await Promise.all(crawlRes);
+    } catch (err) {
+        console.log(err);
+    }
+    return pageAry;
+}
+
+(async () => {
+    //const lectureList = await crawl(4);
+    const lectureList = await multiCrawl(1, 4);
+    console.log(lectureList);
+})();
 
 
-// getHtml()
-//   .then(html => {
-//     let ulList = [];
-//     const $ = cheerio.load(html.data);
-//     const $bodyList = $("div.headline-list ul").children("li.section02");
-
-//     $bodyList.each(function(i, elem) {
-//       ulList[i] = {
-//           title: $(this).find('strong.news-tl a').text(),
-//           url: $(this).find('strong.news-tl a').attr('href'),
-//           image_url: $(this).find('p.poto a img').attr('src'),
-//           image_alt: $(this).find('p.poto a img').attr('alt'),
-//           summary: $(this).find('p.lead').text().slice(0, -11),
-//           date: $(this).find('span.p-time').text()
-//       };
-//     });
-
-//     const data = ulList.filter(n => n.title);
-//     return data;
-//   })
-//   .then(res => log(res));
+export {crawl, multiCrawl};
