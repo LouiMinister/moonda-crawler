@@ -56,11 +56,12 @@ const multiCrawl = async (startPage, endPage) => {
     return pageAry;
 }
 
+/*
 (async () => {
     //const lectureList = await crawl(4);
     const lectureList = await multiCrawl(1, 4);
     console.log(lectureList);
 })();
-
+*/
 
 export {crawl, multiCrawl};
