@@ -4,7 +4,7 @@
   "description": "각 시도별 문화수업 정보를 크롤링하는 서비스입니다.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest --watchAll --verbose",
     "dev": "nodemon --exec babel-node $param",
     "start": "babel-node public/*"
   },
