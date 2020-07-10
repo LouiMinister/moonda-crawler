@@ -41,11 +41,11 @@ const crawl = async (page) => {
 }
 
 const multiCrawl = async (startPage, endPage) => {
-    let crawlRes = ["PADDING"];
+    const crawlRes = [];
     let pageAry;
 
     for (let i = startPage; i <= endPage; i++){
-        crawlRes[i] = crawl(i);
+        crawlRes.push(crawl(i));
     }
 
     try {
@@ -53,12 +53,14 @@ const multiCrawl = async (startPage, endPage) => {
     } catch (err) {
         console.log(err);
     }
-    return pageAry;
+    return pageAry.reduce((acc, record)=>{
+      acc.push(...record);
+      return acc;
+    },[]);
 }
 
 /*
 (async () => {
-    //const lectureList = await crawl(4);
     const lectureList = await multiCrawl(1, 4);
     console.log(lectureList);
 })();
